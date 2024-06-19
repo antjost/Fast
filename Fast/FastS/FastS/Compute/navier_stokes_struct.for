@@ -22,7 +22,8 @@ c***********************************************************************
      &        ti, tj, tk, vol,  ti_df, tj_df, tk_df, vol_df,
      &        venti , ventj , ventk ,
      &        wig , stat_wig, rot,
-     &        drodm , coe, delta, ro_res, ro_src)
+     &        drodm , coe, delta, ro_res, ro_src, ro_tij_model,
+     &        ro_cutOff)
 
 c***********************************************************************
 c_U   USER : TERRACOL
@@ -96,6 +97,8 @@ c
      & ti_df(*),tj_df(*),tk_df(*),vol_df(*), krylov(*), cellN_IBC(*), 
      & ro_src(*),timer_omp(*)
 
+      REAL_E ro_tij_model(*), ro_cutOff(*)
+
       REAL_E delta(*),ro_res(*)
 
       REAL_E psi(nptpsi)
@@ -113,6 +116,8 @@ C Var loc
 
 
       REAL_E rhs_begin,rhs_end
+
+      REAL_E t1, t2, t3, t4, t5, t6
 
 !     !Note
 !     ! Q^(n+1) = Q^n + Dt/vol * Sum_Nface(F_euler - F_viscous)*n +  S
@@ -145,6 +150,7 @@ C Var loc
 #include "FastC/HPC_LAYER/LOOP_CACHE_BEGIN.for"
 #include "FastC/HPC_LAYER/INDICE_RANGE.for"
 
+          t1 = OMP_GET_WTIME()
           flag_wait = 0
 
 c         if(ithread_io.eq.24.and.nitcfg.le.1.and.icache.eq.1
@@ -239,7 +245,9 @@ c       endif
                  !! Pour ZDES, remplissage dans terme source 
                  !call vispalart(ndo, param_int, param_real, ind_grad,
                  call vispalart(ndo, param_int, param_real, ind_coe,
-     &                         xmut,rop_ssiter)
+     &                          xmut,rop_ssiter,
+     &                          xmut(1+param_int(NDIMDX)),
+     &                          ro_cutOff)
               endif
               !Calcul hyperviscosite zone eponge
               if(param_int(LBM_SPONGE).eq.1.and.param_int(IFLOW).ne.1) then
@@ -284,19 +292,25 @@ c       endif
 #include "FastC/HPC_LAYER/SYNCHRO_WAIT.for"
                flag_wait = 1
           ENDIF
-!         STEP I & II: END
+!     STEP I & II: END
+
+          t2 = OMP_GET_WTIME()
 
 
 !         STEP III: RHS init + source term S
           ! - Ajout d'un eventuel terme source au second membre
           ! - initialisation drodm
+          ! - SA: production term & destruction term
+          ! - ZDES: mut, production term, & destruction term
           call src_term(ndo, nitcfg, nb_pulse, param_int, param_real,
      &                  ind_sdm, ind_rhs, ind_ssa, ind_grad,
      &                  temps, nitrun, cycl,
      &                  rop_ssiter, xmut, drodm, coe, x,y,z,cellN_IBC,
      &                  ti,tj,tk,vol(1+shift_vol), 
-     &                  delta, ro_src, wig, rop, rop_m1)
+     &                  delta, ro_src, wig, rop, rop_m1, ro_cutOff)
 
+          t3 = OMP_GET_WTIME()
+          
           IF(flag_wait.eq.0) then
 #include "FastC/HPC_LAYER/SYNCHRO_WAIT.for"
           ENDIF
@@ -316,7 +330,7 @@ c       endif
      &                        psi,wig,stat_wig, rop_ssiter, drodm,
      &                        ti,ti_df,tj,tj_df,tk,tk_df,
      &                        vol(1+shift_vol),vol_df,
-     &                        venti, ventj, ventk, xmut)
+     &                        venti, ventj, ventk, xmut, ro_tij_model)
 
           elseif(param_int(KFLUDOM).eq.2) then
    
@@ -330,7 +344,7 @@ c       endif
      &                        psi,wig,stat_wig, rop_ssiter, drodm,
      &                        ti,ti_df,tj,tj_df,tk,tk_df,
      &                        vol(1+shift_vol),vol_df,
-     &                        venti, ventj, ventk, xmut)
+     &                        venti, ventj, ventk, xmut, ro_tij_model)
 
           elseif(param_int(KFLUDOM).eq.5) then
 
@@ -344,14 +358,14 @@ c       endif
      &                        psi,wig,stat_wig, rop_ssiter, drodm,
      &                        ti,ti_df,tj,tj_df,tk,tk_df,
      &                        vol(1+shift_vol),vol_df,
-     &                        venti, ventj, ventk, xmut)
+     &                        venti, ventj, ventk, xmut, ro_tij_model)
 
           else
                  if(ithread.eq.1) then
                    write(*,*)'Unknown flux',param_int(KFLUDOM)
                  endif
           endif
-
+          t4 = OMP_GET_WTIME()
 #include "FastC/HPC_LAYER/SYNCHRO_GO.for"
 
           !correction flux roe au CL si pas de mvt ALE,....
@@ -376,7 +390,7 @@ c       endif
      &                  venti, ventj, ventk, xmut)
           endif
 !         STEP IV: END
-
+          t5 = OMP_GET_WTIME()
 !         STEP V: SOLUTION UPDATE           
           !Extraction tableau residu
           if(param_int(EXTRACT_RES).eq.1) then
@@ -488,7 +502,8 @@ c       endif
               endif
 
           end if
-
+          t6 = OMP_GET_WTIME()
+          !write(*,*)nitcfg,t2-t1,t3-t1,t4-t1,t5-t1,t6-t1
 #include "FastC/HPC_LAYER/LOOP_CACHE_END.for"
 #include "FastC/HPC_LAYER/WORK_DISTRIBUTION_END.for"
 

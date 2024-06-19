@@ -11,7 +11,7 @@ c***********************************************************************
      &                        icache, jcache, kcache,
      &                        psi, wig, stat_wig, rop, drodm,
      &                        ti,ti_df,tj,tj_df,tk,tk_df, vol,vol_df,
-     &                        venti, ventj, ventk, xmut)
+     &                        venti, ventj, ventk, xmut, rop_tij_model)
 c***********************************************************************
 c_U   USER : PECHIER
 c
@@ -48,6 +48,9 @@ c***********************************************************************
       REAL_E rop(*),xmut(*),drodm(*), ti(*),tj(*),tk(*),vol(*),
      & venti(*),ventj(*),ventk(*), wig(*),stat_wig(*),
      & ti_df(*),tj_df(*),tk_df(*),vol_df(*)
+
+!!     WMLES linearize
+      REAL_E rop_tij_model(*)
 
       REAL_E param_real(0:*)
       REAL_E psi(nptpsi)

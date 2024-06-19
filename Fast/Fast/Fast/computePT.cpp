@@ -163,7 +163,7 @@ PyObject* K_FAST::_computePT(PyObject* self, PyObject* args)
   E_Float** iptCellN  ;    E_Float** iptCellN_IBC; E_Float** ipt_cfl_zones;
   E_Float** iptssor;       E_Float** iptssortmp;
   E_Float** ipt_gmrestmp;  E_Float** iptdrodm_transfer;
-  E_Float** iptS; E_Float** iptFltrN; E_Float** iptPsiG; E_Float** iptSpongeCoef;
+  E_Float** iptS; E_Float** iptFltrN; E_Float** iptPsiG; E_Float** iptSpongeCoef; E_Float** ipt_tij_model; E_Float** ipt_cutOff;
 
   ipt_param_int     = new E_Int*[nidom*7];
   ipt_ind_dm        = ipt_param_int   + nidom;
@@ -173,7 +173,7 @@ PyObject* K_FAST::_computePT(PyObject* self, PyObject* args)
   ipt_nfconn        = ipt_ng_pe       + nidom;
   ipt_nfindex       = ipt_nfconn      + nidom;
 
-  iptx              = new E_Float*[nidom*45];
+  iptx              = new E_Float*[nidom*47];
   ipty              = iptx               + nidom;
   iptz              = ipty               + nidom;
   //
@@ -218,6 +218,8 @@ PyObject* K_FAST::_computePT(PyObject* self, PyObject* args)
   iptroQ_m1         = iptsrc             + nidom;
   iptFltrN          = iptroQ_m1          + nidom;
   iptSpongeCoef     = iptFltrN           + nidom;
+  ipt_tij_model     = iptSpongeCoef      + nidom;
+  ipt_cutOff        = ipt_tij_model      + nidom;
 
   vector<PyArrayObject*> hook;
   PyObject* ssorArray = PyDict_GetItemString(work,"ssors");
@@ -315,7 +317,16 @@ PyObject* K_FAST::_computePT(PyObject* self, PyObject* args)
       if (t == NULL) iptsrc[nd] = NULL;
       else iptsrc[nd]   = K_PYTREE::getValueAF(t, hook);
 
-      if(ipt_param_int[nd][ IBC ]== 1){t=K_PYTREE::getNodeFromName1(sol_center, "cellN_IBC"); iptCellN_IBC[nd] = K_PYTREE::getValueAF(t, hook); }
+
+      t            = K_PYTREE::getNodeFromName1(sol_center, "t11_model");
+      if (t == NULL) ipt_tij_model[nd] = NULL;
+      else ipt_tij_model[nd]   = K_PYTREE::getValueAF(t, hook);
+
+      t            = K_PYTREE::getNodeFromName1(sol_center, "cutOffDist");
+      if (t == NULL) ipt_cutOff[nd] = NULL;
+      else ipt_cutOff[nd]   = K_PYTREE::getValueAF(t, hook);
+
+      if(ipt_param_int[nd][ IBC ]== 1){t=K_PYTREE::getNodeFromName1(sol_center, "cellN_IBC"); iptCellN_IBC[nd] = K_PYTREE::getValueAF(t, hook); } 
       else { iptCellN_IBC[nd] = NULL;}
 
       //Pointeur sur patch de filtrage
@@ -696,7 +707,8 @@ PyObject* K_FAST::_computePT(PyObject* self, PyObject* args)
 		    ipt_linelets_real  , taille_tabs       , iptstk             , iptdrodmstk       ,
 		    iptcstk            , iptsrc            ,
                     f_horseq           , a1_pr             , a1_fd              , a1_hrr      ,
-                    aneq_o3            , psi_corr          , flag_NSLBM);
+                    aneq_o3            , psi_corr          , 
+                    flag_NSLBM         , ipt_tij_model     , ipt_cutOff);
 
               if (lcfl == 1 && nstep == 1)  //mise a jour eventuelle du CFL au 1er sous-pas
               {

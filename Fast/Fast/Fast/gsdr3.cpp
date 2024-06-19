@@ -62,7 +62,7 @@ E_Int K_FAST::gsdr3(E_Int**& param_int          , E_Float**& param_real       , 
 		    E_Float**& iptdrodm_transfer, E_Int*&    param_int_tc     , E_Float*& param_real_tc     , E_Int*& linelets_int    ,
 		    E_Float*& linelets_real     , E_Int&     taille_tabs      , E_Float*& stock             , E_Float*& drodmstock    ,
 		    E_Float*& constk            , E_Float** iptsrc            , E_Float* f_horseq           , E_Float* a1_pr          ,
-                    E_Float* a1_fd              , E_Float* a1_hrr             , E_Float* aneq_o3            , E_Float* psi_corr       ,  E_Int& flag_NSLBM)
+                    E_Float* a1_fd              , E_Float* a1_hrr             , E_Float* aneq_o3            , E_Float* psi_corr       ,  E_Int& flag_NSLBM, E_Float** ipt_tij_model, E_Float** ipt_cutOff)
 {
   E_Float*  feq          = iptdrodm;
   E_Float** feq_transfer = iptdrodm_transfer;

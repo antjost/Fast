@@ -11,7 +11,7 @@ C***********************************************************************
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
 c***********************************************************************
 c_U   USER : PECHIER
 c
@@ -61,6 +61,9 @@ c***********************************************************************
      &        tk( param_int(NDIMDX_MTR) * param_int(NEQ_K ) )
       REAL_E vol( param_int(NDIMDX_MTR) )
 
+!!     WMLES linearize
+      REAL_E rop_tij_model( param_int(NDIMDX) * 6     )
+      
       REAL_E param_real(0:*)
 
 C Var loc
@@ -87,6 +90,10 @@ C Var loc
      & delp,delm,delq,slq,slp,roff,tmin_1,du,dv,dw,dp,dqn,s_1,nx,ny,nz,
      & qn,r,v,w,h,q,r_1,psiroe,avmin, xktvol, xmulam, xmutur, xmutot,
      & c50,c51,c52,c53,c54
+
+!!     WMLES linearize
+      REAL_E gradtmodel_nxLocal,gradtmodel_nyLocal,gradtmodel_nzLocal
+      REAL_E fvWMLES1,fvWMLES2,fvWMLES3
 
 #include "FastS/formule_param.h"
 #include "FastS/formule_mtr_param.h"

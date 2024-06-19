@@ -4,8 +4,9 @@ c     $Revision: 38 $
 c     $Author: IvanMary $
 c***********************************************************************
       subroutine spsource_SA_diff(ndom, nitcfg, param_int, param_real,
-     &                     ind_loop, 
-     &                     xmut,rop,coe, ti, tj, tk, vol,dlng, drodm)
+     &                            ind_loop, 
+     &                            xmut,rop,coe, ti, tj, tk, vol,dlng,
+     &                            drodm)
 c***********************************************************************
 c_P                          O N E R A
 c     ACT
@@ -46,6 +47,8 @@ c***********************************************************************
      &       tk( param_int(NDIMDX_MTR) , param_int(NEQ_K ) )
       REAL_E dlng(param_int(NDIMDX)),vol(param_int(NDIMDX_MTR))
 
+      REAL_E rop_cutOff(param_int(NDIMDX))
+
       REAL_E param_real(0:*)
 
 
@@ -67,6 +70,8 @@ c Var loc
      & tkx, tky,tkz,tkx1,tky1,tkz1,u1,u2,u3,u4,u5,u6,xvol,
      & dudx,dudy,dudz,dvdx,dvdy,dvdz,dwdx,dwdy,dwdz,
      & SA_CW2_LRE,S11,S22,S33,S12,S13,S23,St,r5
+
+      REAL_E DistCoef,cutOffDist
 
 #include "FastS/formule_param.h"
 #include "FastS/formule_mtr_param.h"

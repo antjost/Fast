@@ -11,7 +11,7 @@ c***********************************************************************
      &                        icache, jcache, kcache,
      &                        psi, wig, stat_wig, rop, drodm,
      &                        ti,ti_df,tj,tj_df,tk,tk_df, vol,vol_df,
-     &                        venti, ventj, ventk, xmut)
+     &                        venti, ventj, ventk, xmut, rop_tij_model)
 c***********************************************************************
 c_U   USER : PECHIER
 c
@@ -49,6 +49,9 @@ c***********************************************************************
      & venti(*),ventj(*),ventk(*), wig(*),stat_wig(*),
      & ti_df(*),tj_df(*),tk_df(*),vol_df(*)
 
+!!     WMLES linearize
+      REAL_E rop_tij_model(*)
+
       REAL_E param_real(0:*)
       REAL_E psi(nptpsi)
 
@@ -78,7 +81,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.321) THEN
                                                
@@ -91,7 +94,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.322) THEN
                                                
@@ -104,7 +107,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.323) THEN
                                                
@@ -117,7 +120,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.220) THEN
                                                
@@ -130,7 +133,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.221) THEN
                                                
@@ -143,7 +146,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.222) THEN
                                                
@@ -156,7 +159,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.223) THEN
                                                
@@ -169,7 +172,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.620) THEN
                                                
@@ -182,7 +185,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.621) THEN
                                                
@@ -195,7 +198,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.622) THEN
                                                
@@ -208,7 +211,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.623) THEN
                                                
@@ -221,7 +224,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.120) THEN
                                                
@@ -234,7 +237,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.121) THEN
                                                
@@ -247,7 +250,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.122) THEN
                                                
@@ -260,7 +263,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.123) THEN
                                                
@@ -273,7 +276,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.330) THEN
                                                
@@ -286,7 +289,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.331) THEN
                                                
@@ -299,7 +302,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.332) THEN
                                                
@@ -312,7 +315,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.333) THEN
                                                
@@ -325,7 +328,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.230) THEN
                                                
@@ -338,7 +341,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.231) THEN
                                                
@@ -351,7 +354,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.232) THEN
                                                
@@ -364,7 +367,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.233) THEN
                                                
@@ -377,7 +380,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.630) THEN
                                                
@@ -390,7 +393,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.631) THEN
                                                
@@ -403,7 +406,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.632) THEN
                                                
@@ -416,7 +419,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.633) THEN
                                                
@@ -429,7 +432,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.130) THEN
                                                
@@ -442,7 +445,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.131) THEN
                                                
@@ -455,7 +458,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.132) THEN
                                                
@@ -468,7 +471,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.133) THEN
                                                
@@ -481,7 +484,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.310) THEN
                                                
@@ -494,7 +497,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.311) THEN
                                                
@@ -507,7 +510,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.312) THEN
                                                
@@ -520,7 +523,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.313) THEN
                                                
@@ -533,7 +536,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.210) THEN
                                                
@@ -546,7 +549,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.211) THEN
                                                
@@ -559,7 +562,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.212) THEN
                                                
@@ -572,7 +575,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.213) THEN
                                                
@@ -585,7 +588,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.610) THEN
                                                
@@ -598,7 +601,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.611) THEN
                                                
@@ -611,7 +614,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.612) THEN
                                                
@@ -624,7 +627,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.613) THEN
                                                
@@ -637,7 +640,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.110) THEN
                                                
@@ -650,7 +653,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.111) THEN
                                                
@@ -663,7 +666,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.112) THEN
                                                
@@ -676,7 +679,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.113) THEN
                                                
@@ -689,7 +692,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1320) THEN
                                                
@@ -702,7 +705,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1321) THEN
                                                
@@ -715,7 +718,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1322) THEN
                                                
@@ -728,7 +731,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1323) THEN
                                                
@@ -741,7 +744,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1220) THEN
                                                
@@ -754,7 +757,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1221) THEN
                                                
@@ -767,7 +770,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1222) THEN
                                                
@@ -780,7 +783,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1223) THEN
                                                
@@ -793,7 +796,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1620) THEN
                                                
@@ -806,7 +809,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1621) THEN
                                                
@@ -819,7 +822,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1622) THEN
                                                
@@ -832,7 +835,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1623) THEN
                                                
@@ -845,7 +848,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1120) THEN
                                                
@@ -858,7 +861,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1121) THEN
                                                
@@ -871,7 +874,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1122) THEN
                                                
@@ -884,7 +887,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1123) THEN
                                                
@@ -897,7 +900,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1330) THEN
                                                
@@ -910,7 +913,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1331) THEN
                                                
@@ -923,7 +926,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1332) THEN
                                                
@@ -936,7 +939,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1333) THEN
                                                
@@ -949,7 +952,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1230) THEN
                                                
@@ -962,7 +965,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1231) THEN
                                                
@@ -975,7 +978,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1232) THEN
                                                
@@ -988,7 +991,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1233) THEN
                                                
@@ -1001,7 +1004,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1630) THEN
                                                
@@ -1014,7 +1017,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1631) THEN
                                                
@@ -1027,7 +1030,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1632) THEN
                                                
@@ -1040,7 +1043,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1633) THEN
                                                
@@ -1053,7 +1056,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1130) THEN
                                                
@@ -1066,7 +1069,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1131) THEN
                                                
@@ -1079,7 +1082,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1132) THEN
                                                
@@ -1092,7 +1095,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1133) THEN
                                                
@@ -1105,7 +1108,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1310) THEN
                                                
@@ -1118,7 +1121,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1311) THEN
                                                
@@ -1131,7 +1134,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1312) THEN
                                                
@@ -1144,7 +1147,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1313) THEN
                                                
@@ -1157,7 +1160,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1210) THEN
                                                
@@ -1170,7 +1173,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1211) THEN
                                                
@@ -1183,7 +1186,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1212) THEN
                                                
@@ -1196,7 +1199,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1213) THEN
                                                
@@ -1209,7 +1212,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1610) THEN
                                                
@@ -1222,7 +1225,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1611) THEN
                                                
@@ -1235,7 +1238,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1612) THEN
                                                
@@ -1248,7 +1251,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1613) THEN
                                                
@@ -1261,7 +1264,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1110) THEN
                                                
@@ -1274,7 +1277,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1111) THEN
                                                
@@ -1287,7 +1290,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1112) THEN
                                                
@@ -1300,7 +1303,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
        ELSEIF (option.eq.1113) THEN
                                                
@@ -1313,7 +1316,7 @@ C Var loc
      &                 icache, jcache, kcache,
      &                 rop, drodm, wig,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
                                                
       ELSE
          write(*,*) ' option = ' , option 

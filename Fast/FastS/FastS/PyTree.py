@@ -122,6 +122,8 @@ def _compute(t, metrics, nitrun, tc=None, graph=None, tc2=None, graph2=None, lay
     itypcp = param_int_firstZone[29]
     rk     = param_int_firstZone[52]
     exploc = param_int_firstZone[54]
+
+    param_real_firstZone = Internal.getNodeFromName2( zones[0], 'Parameter_real' )[1]
     #### a blinder...
     if nitrun == 1: print('Info: using layer trans=%s (ompmode=%d)'%(layer, ompmode))
 
@@ -237,6 +239,9 @@ def _compute(t, metrics, nitrun, tc=None, graph=None, tc2=None, graph2=None, lay
     else: ### layer C
       if isWireModel:
           raise ValueError("compute: FastS.PyTree.py C layer doesn't currently support the wire mesh model.")
+      ## WMLES - Kawai & Tamaki 2021
+      if (param_real_firstZone[VSHARE.WL_IBM_SWTCH]>30):
+          raise ValueError("compute: FastS.PyTree.py C layer doesn't currently support the WMLES linearization of Kawai and Tamaki.")
 
       nstep_deb = 1
       nstep_fin = nitmax
@@ -1080,6 +1085,7 @@ def _updateGradPInfoHO(t, tc, metrics, type='IBCD', algo="Fast"):
 
   return None
 
+#==============================================================================
 def _UpdateUnsteadyJoinParam(t, tc, omega, timelevelInfos, split='single', root_steady='tc_steady', root_unsteady='tc_', dir_steady='.', dir_unsteady='.', init=False):
 
     #on cree les noeud infos insta pour chimere perio s'il n'existe pas 
@@ -1224,6 +1230,8 @@ def _applyBC(t, metrics, hook1, nstep, var="Density"):
 #==============================================================================
 def _fillGhostcells(zones, tc, metrics, timelevel_target, vars, nstep, omp_mode, hook1, nitmax=1, rk=1, exploc=0, num_passage=1, gradP=False, TBLE=False, isWireModel=False):
    # timecount = numpy.zeros(4, dtype=numpy.float64)
+   isWMLESLin = False
+   if (Internal.getNodeFromName(zones, 'Parameter_real')[1][VSHARE.WL_IBM_SWTCH])>30:isWMLESLin=True
    
    varsGrad = []
    if hook1['lexit_lu'] ==0:
@@ -1270,14 +1278,14 @@ def _fillGhostcells(zones, tc, metrics, timelevel_target, vars, nstep, omp_mode,
                   type_transfert  = 1
                   no_transfert    = 1
                   isWireModel_int = 1
-                  Connector.connector.___setInterpTransfers(zones, zonesD, vars, dtloc, param_int, param_real, timelevel_target, varType, type_transfert, no_transfert, nstep, nitmax, rk, exploc, num_passage, isWireModel_int)#,timecount)
+                  Connector.connector.___setInterpTransfers(zones, zonesD, vars, dtloc, param_int, param_real, timelevel_target, varType, type_transfert, no_transfert, nstep, nitmax, rk, exploc, num_passage, isWireModel_int,isWMLESLin)#,timecount)
                   isWireModel_int = 2
-                  Connector.connector.___setInterpTransfers(zones, zonesD, vars, dtloc, param_int, param_real, timelevel_target, varType, type_transfert, no_transfert, nstep, nitmax, rk, exploc, num_passage, isWireModel_int)#,timecount)
+                  Connector.connector.___setInterpTransfers(zones, zonesD, vars, dtloc, param_int, param_real, timelevel_target, varType, type_transfert, no_transfert, nstep, nitmax, rk, exploc, num_passage, isWireModel_int,isWMLESLin)#,timecount)
 
               type_transfert  = 2  # 0= ID uniquement, 1= IBC uniquement, 2= All
               no_transfert    = 1  # dans la list des transfert point a point
               isWireModel_int = 0
-              Connector.connector.___setInterpTransfers(zones, zonesD, vars, dtloc, param_int, param_real, timelevel_target, varType, type_transfert, no_transfert, nstep, nitmax, rk, exploc, num_passage, isWireModel_int)#,timecount)
+              Connector.connector.___setInterpTransfers(zones, zonesD, vars, dtloc, param_int, param_real, timelevel_target, varType, type_transfert, no_transfert, nstep, nitmax, rk, exploc, num_passage, isWireModel_int,isWMLESLin)#,timecount)
                   
        #apply BC
        #t0=timeit.default_timer()
@@ -1883,6 +1891,7 @@ def _postStats(tmy):
 
     return None
 
+#==============================================================================
 # Compact stat tree
 def _compactStats(ts):
     sol = Internal.getNodesFromName3(ts, 'FlowSolution#Centers')
@@ -1892,6 +1901,7 @@ def _compactStats(ts):
     FastC._compact(ts, fields=varmy)
     return None
 
+#==============================================================================
 # Return phase number
 def phase(time, omega, dpsi):
     psi = time*omega*180./numpy.pi
@@ -1899,6 +1909,7 @@ def phase(time, omega, dpsi):
     p = int(psi/dpsi)
     return p
 
+#==============================================================================
 # IN: time: current time
 # IN: omega: rotation speed (rad/s)
 # IN: dpsi: phase range in psi
@@ -2282,7 +2293,7 @@ def write_plt_format(t, i, FileCvg, nd, it=[], RSD_L2=[], RSD_oo=[], RSD_L2_diff
        FileCvg.write('%s %s\n'%(1+c[l],a))
     return nd
 
-
+#==============================================================================
 # IN: t: tree with ConvergenceHistory ()
 # IN: fileout: fileName for output of residuas in tp format
 # IN: perZones: write ConvergenceHistory for each zones
@@ -3459,7 +3470,7 @@ def splitting_per_direction(t,dir,taille_bloc):
 
     return t
 
-
+#==============================================================================
 def _decoupe4(t,tc=None,exposantMax=2,NP=0,taille_bloc=25,isOctree=False):
     import Transform.PyTree as T
 
@@ -3696,7 +3707,7 @@ def _decoupe4(t,tc=None,exposantMax=2,NP=0,taille_bloc=25,isOctree=False):
                             Internal.addChild(node, z2, pos=-1)        
     return (t,tc)
 
-
+#==============================================================================
 def set_dt_lts(t,running_cfl=None,dt=None):
     import Transform.PyTree as T
     if running_cfl is None and dt is None:
@@ -3877,7 +3888,7 @@ def _computedJdX(t, metrics, nitrun, tc=None, graph=None, indFunc):
 
 '''
 
-
+#==============================================================================
 ##ADD to the t_conv_history
 def add2previous(var_list,zone_save,zone_current,it0):
     
@@ -3905,7 +3916,7 @@ def add2previous(var_list,zone_save,zone_current,it0):
     Internal.setValue(zone_save,new_value_node)
     return None
 
-
+#==============================================================================
 ##POPULATE GLOBAL CONVERGENCE FOR EACH BASE
 def calc_global_convergence(t):
     var_list    =['RSD_oo','RSD_L2','RSD_oo_diff','RSD_L2_diff']
@@ -3979,7 +3990,7 @@ def calc_global_convergence(t):
                 RSD_b[:] = RSD_b[:]/total_Ncells #nzones            
     return t
 
-
+#==============================================================================
 ##ADD or CREATE a t_conv_history (tree that stores only the convergence history)
 def create_add_t_converg_hist(t2,it0=0,t_conv_hist=None):
     var_list    =['IterationNumber','RSD_oo','RSD_L2','RSD_oo_diff','RSD_L2_diff']

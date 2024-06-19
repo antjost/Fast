@@ -6,7 +6,7 @@ c***********************************************************************
       subroutine spsource_ZDES3_vol(ndom, param_int, param_real,
      &                     ind_loop, 
      &                     xmut,rop,coe, ti, tj, tk, vol, dlng, zgris,
-     &                     drodm)
+     &                     rop_cutOff,drodm)
 c***********************************************************************
 c_P                          O N E R A
 c     ACT
@@ -49,11 +49,13 @@ c***********************************************************************
 
       REAL_E dlng(param_int(NDIMDX)),vol(param_int(NDIMDX_MTR))
 
+      REAL_E rop_cutOff(param_int(NDIMDX))
+
       REAL_E param_real(0:*)
 
 
 
-c Var loc 
+c Var loc  
       INTEGER_E incmax,i,j,k,l,icoe_pos,inci,incj,inck,inci_mtr,
      & incj_mtr,inck_mtr, l1,l2,l3,l4,l5,l6,ltij,lij,lt,ndimdx,lvo
 
@@ -75,6 +77,8 @@ c Var loc
      & SWITCH_SA_LOW_RE,SWITCH_SA_ROT_CORR
 
 
+      REAL_E DistCoef,cutOffDist,stildRANS,f2RANS
+      
 #include "FastS/formule_param.h"
 #include "FastS/formule_mtr_param.h"
 

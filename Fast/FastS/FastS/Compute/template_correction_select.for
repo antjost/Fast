@@ -7,7 +7,7 @@ c***********************************************************************
      &                        ind_loop, 
      &                        rop, drodm  , wig,
      &                        venti, ventj, ventk,
-     &                        ti,tj,tk,vol, xmut)
+     &                        ti,tj,tk,vol, xmut, rop_tij_model)
 c***********************************************************************
 c_U   USER : PECHIER
 c
@@ -39,6 +39,9 @@ c***********************************************************************
 
       REAL_E rop(*),drodm(*), ti(*),tj(*),tk(*),vol(*),
      & venti(*),ventj(*),ventk(*), wig(*), xmut(*)
+
+!!     WMLES linearize
+      REAL_E rop_tij_model(*)      
 
       REAL_E param_real(0:*)
 

@@ -715,6 +715,19 @@ def warmup(t, tc, graph=None, infos_ale=None, Adjoint=False, tmy=None, list_grap
     Lref= 1.
     gradP      =False
     isWireModel=False
+       
+    ## WMLES - Kawai & Tamaki 2021
+    model = 'NSLaminar'
+    a = Internal.getNodeFromName(t, 'GoverningEquations')
+    if a is not None: model = Internal.getValue(a)
+
+    WL_IBM_SWTCH = 1
+    first = Internal.getNodeFromName1(t, 'WL_IBM_SWTCH')
+    if first is not None: WL_IBM_SWTCH = Internal.getValue(first)
+
+    isWMLESLin   = False
+    if WL_IBM_SWTCH>30: isWMLESLin=True
+
     if tc is not None:
         base       = Internal.getBases(tc)[0]
         solverIBC  = Internal.getNodeFromName(base ,'.Solver#IBCdefine')
@@ -737,17 +750,25 @@ def warmup(t, tc, graph=None, infos_ale=None, Adjoint=False, tmy=None, list_grap
         procDict  = graph['procDict']
         graphID   = graph['graphID']
         graphIBCD = graph['graphIBCD']
-        if isWireModel: graphInvIBCD_WM  = Cmpi.computeGraph(tc, type='INV_IBCD', procDict=procDict)
+        if isWireModel or (model=='NSLaminar' and isWMLESLin):
+            graphInvIBCD_WM  = Cmpi.computeGraph(tc, type='INV_IBCD', procDict=procDict)
+
     elif graph is not None and grapheliste:
         procDict  = graph[0]['procDict']
         graphID   = graph[0]['graphID']
         graphIBCD = graph[0]['graphIBCD']
-        if isWireModel: graphInvIBCD_WM = Cmpi.computeGraph(tc, type='INV_IBCD', procDict=procDict)
+        if isWireModel or (model=='NSLaminar' and isWMLESLin):
+            graphInvIBCD_WM = Cmpi.computeGraph(tc, type='INV_IBCD', procDict=procDict)
     else: 
         procDict=None; graphID=None; graphIBCD=None; graphInvIBCD_WM=None
         
     if isWireModel and graphInvIBCD_WM is None:
         print("Wire Model REQUIRES graphInvIBCD...exiting")
+        exit()
+
+    ## WMLES - Kawai & Tamaki 2021
+    if isWMLESLin and graphInvIBCD_WM is None:
+        print("WMLES of Kawai and Tamaki 2021  REQUIRES graphInvIBCD...exiting")
         exit()
 
     # compute info linelets
@@ -797,12 +818,14 @@ def warmup(t, tc, graph=None, infos_ale=None, Adjoint=False, tmy=None, list_grap
         procDict  = graph['procDict']
         graphID   = graph['graphID']
         graphIBCD = graph['graphIBCD']
-        if isWireModel: graphInvIBCD_WM = Cmpi.computeGraph(tc, type='INV_IBCD', procDict=procDict)
+        if isWireModel or (model=='NSLaminar' and isWMLESLin):
+            graphInvIBCD_WM = Cmpi.computeGraph(tc, type='INV_IBCD', procDict=procDict)
     elif graph is not None and grapheliste:  ### Dans warmup tous les transferts doivent etre faits
         procDict  = graph[nssiter-2]['procDict']   ### On va chercher le graphe a nssiter-2 car a cette ssite tous les transferts
         graphID   = graph[nssiter-2]['graphID']    ### sont faits pour le schema a pas de temps local
         graphIBCD = graph[nssiter-2]['graphIBCD']
-        if isWireModel: graphInvIBCD_WM  = Cmpi.computeGraph(tc, type='INV_IBCD', procDict=procDict)
+        if isWireModel or (model=='NSLaminar' and isWMLESLin):
+            graphInvIBCD_WM  = Cmpi.computeGraph(tc, type='INV_IBCD', procDict=procDict)
     else: 
         procDict=None; graphID=None; graphIBCD=None; graphInvIBCD_WM = None
     zones = Internal.getZones(t)
@@ -920,7 +943,7 @@ def warmup(t, tc, graph=None, infos_ale=None, Adjoint=False, tmy=None, list_grap
         var = Internal.getNodesFromType1(sol[0] , 'DataArray_t')
         varmy=[]
         for v in var: varmy.append('centers:'+v[0])
-        FastC._compact(tmy, fields=varmy)
+        FastC._compact(tmy, fields=varmy, dtloc=dtlocPy)
 
     #
     # remplissage ghostcells

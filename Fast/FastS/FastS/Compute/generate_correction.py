@@ -188,7 +188,7 @@ for ale in TypeMotion:
                            select_out.append('     &                 rop, drodm , wig,\n') 
                            select_out.append('     &                 venti, ventj, ventk,\n') 
                            #select_out.append('     &                 ti, tj, tk, vol)\n')  pour correction euler
-                           select_out.append('     &                 ti, tj, tk, vol, xmut)\n') 
+                           select_out.append('     &                 ti, tj, tk, vol, xmut, rop_tij_model)\n') 
                            select_out.append('                                               \n') 
 
                         lines_select_beg = lines_select_beg +   select_out 

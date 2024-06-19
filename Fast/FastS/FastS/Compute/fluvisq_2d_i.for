@@ -71,6 +71,13 @@ CCCCCC
       volinv = 1./(vol(lvor)+vol(lvol))
 #include  "FastS/Compute/mut_interface.for"
 
+!!rop_tij_model(il + v1) = il*1!t11
+!!rop_tij_model(il + v2) = il*10!t12
+!!rop_tij_model(il + v3) = il*100!t22
+!!rop_tij_model(il + v4) = il*100!t13
+!!rop_tij_model(il + v5) = il*1000!t23
+!!rop_tij_model(il + v6) = il*10000!t33
+      
       fv     = -(2.*f1*tcx +    f2*tcy)*xmutvol
       fv5    =        fv * (rop(ir+v2)+rop(il +v2))
       flu2   = flu2 + fv

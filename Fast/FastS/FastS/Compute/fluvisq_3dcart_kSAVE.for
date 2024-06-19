@@ -71,31 +71,28 @@ CCCCCC
       f6 =  gradW_nz - div
 
 #include  "FastS/Compute/mut_interface.for"
-      fvWMLES1=0
-      fvWMLES2=0
-      fvWMLES3=0
-      if (int(param_real(WL_IBM_SWTCH))>30) then
-         gradtmodel_nzLocal= 0.5*(rop_tij_model(ir+v4)+
-     &                            rop_tij_model(il+v4))       !t13
-         fvWMLES1          = -(gradtmodel_nzLocal*tcz)
-         
-         gradtmodel_nzLocal= 0.5*(rop_tij_model(ir+v5)+
-     &                            rop_tij_model(il+v5))       !t23
-         fvWMLES2          = -(gradtmodel_nzLocal*tcz)
-      
-         gradtmodel_nzLocal= 0.5*(rop_tij_model(ir+v6)+
-     &                            rop_tij_model(il+v6))       !t33
-         fvWMLES3          = -(gradtmodel_nzLocal*tcz)
-      end if
-      fv     =  -   f3*tcz*xmutvol + fvWMLES1
+!fvWMLES1=0
+!fvWMLES2=0
+!fvWMLES3=0
+!if (int(param_real(WL_IBM_SWTCH))>30) then
+!   gradtmodel_nzLocal= 0.5*(rop_src(ir+v4)+rop_src(il +v4)) !t13
+!   fvWMLES1          = -(gradtmodel_nzLocal*tcz)
+!   
+!   gradtmodel_nzLocal= 0.5*(rop_src(ir+v5)+rop_src(il +v5)) !t23
+!   fvWMLES2          = -(gradtmodel_nzLocal*tcz)
+!
+!   gradtmodel_nzLocal= 0.5*(rop_src(ir+v6)+rop_src(il +v6)) !t33
+!   fvWMLES3          = -(gradtmodel_nzLocal*tcz)
+!end if
+      fv     =  -   f3*tcz*xmutvol !+ fvWMLES1
       fv5    =        fv * (rop(ir+v2)+rop(il +v2))
       flu2   = flu2 + fv
 
-      fv     =  -   f5*tcz*xmutvol + fvWMLES2
+      fv     =  -   f5*tcz*xmutvol !+ fvWMLES2
       fv5    = fv5  + fv * (rop(ir+v3)+rop(il +v3))
       flu3   = flu3 + fv
 
-      fv     =  -2.*f6*tcz*xmutvol + fvWMLES3
+      fv     =  -2.*f6*tcz*xmutvol !+ fvWMLES3
       fv5    = fv5  + fv * (rop(ir+v4)+rop(il +v4))
       flu4   = flu4 + fv
 

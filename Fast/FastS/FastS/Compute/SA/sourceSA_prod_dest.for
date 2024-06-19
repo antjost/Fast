@@ -1,8 +1,9 @@
 #include  "FastS/Compute/mulam.for" 
 #include  "FastS/Compute/SA/chi.for" 
 
-          !CALCUL DU TERME DE PRODUCTION
-          f1       = fv1(chi)
+!CALCUL DU TERME DE PRODUCTION
+          DistCoef = rop_cutOff(l)
+          f1       = DistCoef*fv1(DistCoef*chi)
           f2       = fv2(chi,f1)
           
           dist     = max(dlng(l), 1.e-27)

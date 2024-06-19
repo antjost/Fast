@@ -2,13 +2,14 @@
 #include  "FastS/Compute/mulam.for"
 !! anutild :: ν turbulent SA nu tilde  || chi:: ν/v(kinematic viscosity)
 #include  "FastS/Compute/SA/chi.for"
-          fvv1 = fv1(chi)
+!!fvv1 = fv1(chi)
+#include  "FastS/Compute/SA/fv1Gen.for"       
 #include  "FastS/Compute/SA/xmut.for"
 !!ad1 :: d_w wall distance        
           ad1      = max(dlng(l) , 1.e-27)
           
           ra       =(xmut(l)/rop(l ,1))
-     1                  /(SA_CKARM*SA_CKARM*ad1*ad1*auijuij**0.5)  ! r_d = (\{nu}_t+\{nu})/(\sqrt{U_{i,j}^2}*\kappa^2*d_w^2)
+     &                  /(SA_CKARM*SA_CKARM*ad1*ad1*auijuij**0.5)  ! r_d = (\{nu}_t+\{nu})/(\sqrt{U_{i,j}^2}*\kappa^2*d_w^2)
           variable2=512.*ra*ra*ra                                      ! (8*r_d)^3
           variable2=min(variable2,15.)                                 ! cut tanh to 1
           fa       =1. - tanh(variable2)                               ! f_d = 1-tanh((8*r_d)^3)

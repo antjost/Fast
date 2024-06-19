@@ -61,11 +61,11 @@ PyObject* K_FASTS::_computePT_mut(PyObject* self, PyObject* args)
 
   E_Float** iptro; E_Float** iptmut;
   E_Float** ipti;  E_Float** iptj;  E_Float** iptk; E_Float** iptvol;
-  E_Float** ipt_param_real; E_Float** iptdist; 
+  E_Float** ipt_param_real; E_Float** iptdist; E_Float** iptcutOff; 
 
   E_Int**   ipt_param_int;
 
-  ipt_param_real    = new  E_Float*[nidom*8];
+  ipt_param_real    = new  E_Float*[nidom*9];
   iptro             = ipt_param_real + nidom;
   iptmut            = iptro          + nidom;
   ipti              = iptmut         + nidom;
@@ -73,6 +73,7 @@ PyObject* K_FASTS::_computePT_mut(PyObject* self, PyObject* args)
   iptk              = iptj           + nidom;
   iptvol            = iptk           + nidom;
   iptdist           = iptvol         + nidom;
+  iptcutOff         = iptdist        + nidom;
  
   ipt_param_int     = new  E_Int*[nidom];
 
@@ -101,7 +102,15 @@ PyObject* K_FASTS::_computePT_mut(PyObject* self, PyObject* args)
       { t                 = K_PYTREE::getNodeFromName1(sol_center, "ViscosityEddy");
         iptmut[nd]        = K_PYTREE::getValueAF(t, hook);
 
-        if (ipt_param_int[nd][ IFLOW ] ==3) 
+        if (ipt_param_int[nd][ IFLOW ] ==2) 
+            { t  = K_PYTREE::getNodeFromName1(sol_center, "cutOffDist");
+
+              if (t == NULL) { PyErr_SetString(PyExc_ValueError, "cutOffDist is missing for NS computations."); return NULL;}
+              else iptcutOff[nd] = K_PYTREE::getValueAF(t, hook);
+            }
+        else iptcutOff[nd] = iptro[nd];
+
+	if (ipt_param_int[nd][ IFLOW ] ==3) 
             { t  = K_PYTREE::getNodeFromName1(sol_center, "TurbulentDistance");
 
               if (t == NULL) { PyErr_SetString(PyExc_ValueError, "TurbulentDistance is missing for NS computations."); return NULL;}
@@ -203,7 +212,7 @@ PyObject* K_FASTS::_computePT_mut(PyObject* self, PyObject* args)
                      ipt_param_int[nd], ipt_param_real[nd], ipt_ijkv_sdm_thread,
                      ipt_ind_dm_loc, ipt_ind_dm_socket, ipt_topo_omp, ipt_inddm_omp,
                      ipt_topology_socket, ipt_lok_thread ,
-                     iptro[nd] , ipti[nd] , iptj[nd] , iptk[nd] , iptvol[nd]  , iptmut[nd], iptdist[nd], iptrot);
+		    iptro[nd] , ipti[nd] , iptj[nd] , iptk[nd] , iptvol[nd]  , iptmut[nd], iptdist[nd], iptrot, iptcutOff[nd]);
         }// boucle zone 
 # include "FastC/HPC_LAYER/INIT_LOCK.h"
   }  // zone OMP

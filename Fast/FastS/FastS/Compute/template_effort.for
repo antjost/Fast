@@ -15,7 +15,7 @@ c***********************************************************************
      &                 rop, flu, wig,
      &                 x, y, z,
      &                 venti, ventj, ventk,
-     &                 ti, tj, tk, vol, xmut)
+     &                 ti, tj, tk, vol, xmut, rop_tij_model)
 c***********************************************************************
 c_U   USER : PECHIER
 c
@@ -63,6 +63,9 @@ c***********************************************************************
       REAL_E   y( param_int(NDIMDX_XYZ) )
       REAL_E   z( param_int(NDIMDX_XYZ) )
 
+!!     WMLES linearize
+      REAL_E rop_tij_model( param_int(NDIMDX) * 6     )      
+
       REAL_E param_real(0:*), pos(3)
 
       REAL_E flu( param_int_eff(NDIMDX)*param_int_eff(NEQ) ), effort(12)
@@ -93,6 +96,10 @@ C Var loc
      & qn,r,v,w,h,q,r_1,psiroe,avmin,sens,sens1,flagi,flagj,flagk,norm,
      & xktvol, xmulam, xmutur, xmutot,
      & c50,c51,c52,c53,c54
+
+!!     WMLES linearize
+      REAL_E gradtmodel_nxLocal,gradtmodel_nyLocal,gradtmodel_nzLocal
+      REAL_E fvWMLES1,fvWMLES2,fvWMLES3         
 
 #include "FastS/formule_param.h"
 #include "FastS/formule_xyz_param.h"

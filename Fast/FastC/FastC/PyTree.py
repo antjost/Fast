@@ -169,6 +169,11 @@ def _createPrimVars(t, omp_mode, rmConsVars=True, Adjoint=False, gradP=False, is
     """Create primitive vars from conservative vars."""
     vars_zones=[]
     flag_NSLBM = 0
+
+    WL_IBM_SWTCH = 1
+    first = Internal.getNodeFromName1(t, 'WL_IBM_SWTCH')
+    if first is not None: WL_IBM_SWTCH = Internal.getValue(first)
+    
     bases = Internal.getNodesFromType1(t, 'CGNSBase_t')
     for b in bases:  
         #On regarde si b est une simulation couplee NS-LBM
@@ -281,6 +286,20 @@ def _createPrimVars(t, omp_mode, rmConsVars=True, Adjoint=False, gradP=False, is
                for v in vars_c:
                  fields2compact.append('centers:'+v+'_src')
                vars.append(fields2compact)
+               
+            if WL_IBM_SWTCH > 2:
+               ## MuskerLin (11), SALin (12), or WMLES - Kawai & Tamaki 2021 with Musker or SA
+               fields2compact =[]
+               fields2compact.append('centers:cutOffDist')
+               vars.append(fields2compact)
+            if WL_IBM_SWTCH > 30:
+               ## WMLES - Kawai & Tamaki 2021 
+               listTijModel =['t11_model','t12_model','t22_model',
+                              't13_model','t23_model','t33_model']  
+               fields2compact =[]
+               for v in listTijModel:
+                   fields2compact.append('centers:'+v)
+               vars.append(fields2compact)   
             if motion == 'deformation' or motion == 'rigid_ext':     #ale deformable
                fields2compact =[]
                for v in ['VelocityX','VelocityY','VelocityZ']:
@@ -772,6 +791,16 @@ def _createVarsFast(base, zone, omp_mode, rmConsVars=True, adjoint=False, gradP=
        if C.isNamePresent(zone, 'centers:EnergyStagnationDensity_src') != 1: C._initVars(zone, 'centers:EnergyStagnationDensity_src', 0.)
        if (sa and C.isNamePresent(zone, 'centers:TurbulentSANuTildeDensity_src') != 1): C._initVars(zone, 'centers:TurbulentSANuTildeDensity_src', 0.)
 
+    if int(Internal.getNodeFromName2(zone, 'Parameter_real')[1][VSHARE.WL_IBM_SWTCH]) > 0:
+       ## MuskerLin (11), SALin (12), or WMLES - Kawai & Tamaki 2021 with Musker or SA
+       if C.isNamePresent(zone, 'centers:cutOffDist')   != 1:   C._initVars(zone, 'centers:cutOffDist', 1.)
+       
+    if int(Internal.getNodeFromName2(zone, 'Parameter_real')[1][VSHARE.WL_IBM_SWTCH]) > 30:
+       ## WMLES - Kawai & Tamaki 2021 
+       listTijModel =['t11_model','t12_model','t22_model','t13_model','t23_model','t33_model']
+       for v in listTijModel:
+           if C.isNamePresent(zone, 'centers:'+v)   != 1:   C._initVars(zone, 'centers:'+v, 0.)       
+
     # init termes zone eponge
     sponge = 0
     a = Internal.getNodeFromName1(define,'lbm_sponge')
@@ -992,9 +1021,26 @@ def _buildOwnData(t, Padding):
     else:
        if flaglbm: Internal.createUniqueChild(t, 'LBMCycleIteration', 'DataArray_t', value=0)
 
-    MafzalMode = 3
-    first = Internal.getNodeFromName1(t, 'MafzalMode')
-    if first is not None: MafzalMode = Internal.getValue(first)
+    WL_IBM_SWTCH = 1
+    first = Internal.getNodeFromName1(t, 'WL_IBM_SWTCH')
+    if first is not None: WL_IBM_SWTCH = Internal.getValue(first)
+
+    if WL_IBM_SWTCH not in [1,2,11,12,31,32] or WL_IBM_SWTCH<0:
+        print('ERROR:WL_IBM_SWTCH can only takes values of 1 (Musker Wall Law), 2 (Spalart Allmaras Wall Law), 11 (Musker Wall Law with Linearization), 21 (Spalart Allmaras Wall Law with Linearization)', flush=True)
+        print('31 (Kawai & Tamaki 2021 WMLES t_ij model approach with Musker), or 32 (Kawai & Tamaki 2021 WMLES t_ij model approach with SA)',flush=True)
+        print('Exiting....')
+        exit()
+
+    KWire_p         = 0.1 
+    DiameterWire_p  = 0.1 
+    CtWire_p        = 0.1
+
+    first = Internal.getNodeFromName1(t, 'KWire_p')
+    if first is not None: KWire_p = Internal.getValue(first)
+    first = Internal.getNodeFromName1(t, 'DiameterWire_p')
+    if first is not None: DiameterWire_p = Internal.getValue(first)
+    first = Internal.getNodeFromName1(t, 'CtWire_p')
+    if first is not None: CtWire_p = Internal.getValue(first)
 
     AlphaGradP = 1
     first = Internal.getNodeFromName1(t, 'AlphaGradP')
@@ -1185,9 +1231,7 @@ def _buildOwnData(t, Padding):
     for b in bases:
         zones = Internal.getNodesFromType2(b, 'Zone_t')
         nzones=len(zones)
-        #print("Bases", b[0], nzones)
         for z in zones:
-            #print("ZONES", b[0], z[0])
             shiftvar   = 0
             #=== check for a padding file  (cache associativity issue)
             dims = Internal.getZoneDim(z)
@@ -1862,8 +1906,8 @@ def _buildOwnData(t, Padding):
             
             #=====================================================================
             # creation noeud parametre real 
-            #=====================================================================
-            number_of_defines_param_real = 64                                    # Number Param REAL
+            #number_of_defines_param_real = 64                                    # Number Param REAL
+            number_of_defines_param_real = 75                                    # Number Param REAL
             size_real                    = number_of_defines_param_real+1
             datap                        = numpy.zeros(size_real, numpy.float64)
             if dtc < 0: 
@@ -1918,8 +1962,8 @@ def _buildOwnData(t, Padding):
             datap[55]=  coef_hyper[0] 
             datap[56]=  coef_hyper[1] 
 
-            # Ben's WM
-            datap[57] = MafzalMode
+            # WM
+            datap[57] = WL_IBM_SWTCH
             datap[58] = AlphaGradP
             datap[59] = NbptsLinelets
 
@@ -1927,13 +1971,13 @@ def _buildOwnData(t, Padding):
             datap[60] = numpy.sqrt(((0.25*KWire_p)**2+1))-0.25*KWire_p # DeltaVWire
             datap[61] = KWire_p
             datap[62] = DiameterWire_p
-            datap[63] = CtWire_p
-
+            datap[63] = CtWire_p           
+            
             ## Rotation IBM            
             datap[64]=0
             timemotion = Internal.getNodesFromName(z,'TimeMotion')
             if timemotion:
-                rotlocal = Internal.getNodeFromType(timemotion, 'TimeRigidMotion_t')
+                rotlocal     = Internal.getNodeFromType(timemotion, 'TimeRigidMotion_t')
                 datap[64]    = Internal.getValue(Internal.getNodeFromName(rotlocal,'MotionType'))
 
             # LBM related stuff
@@ -4603,6 +4647,9 @@ def tcStat_IBC(t,tc,vartTypeIBC=2,bcTypeIB=3):
     [RoInf, RouInf, RovInf, RowInf, RoeInf, PInf, TInf, cvInf, MInf,
      ReInf, Cs, Gamma, RokInf, RoomegaInf, RonutildeInf,
      Mus, Cs, Ts, Pr] = C.getState(t)
+
+    zones = Internal.getZones(t)
+    X.miseAPlatDonorTree__(zones, tc, graph=None, list_graph=None, nbpts_linelets=None)
     
     C._initVars(t,'{centers:Temperature}={centers:Pressure}/(287.053*{centers:Density})')
     VARSMACRO   =['Density','VelocityX','VelocityY','VelocityZ','Temperature']

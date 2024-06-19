@@ -285,7 +285,7 @@
 #define HYPER_COEF2  56
 
 /*IBM WL*/
-#define MAFZAL_MODE    57
+#define WL_IBM_SWTCH   57
 #define ALPHAGRADP     58
 #define NBPTS_LINELETS 59
 
@@ -297,6 +297,9 @@
 
 /*Rotation - IBM*/
 #define MotionType   64
+
+/*flag to linearize WM IBC treatment*/
+#define WM_IBM_Lin   75
 
 /*CONSTANTS*/
 #define SA_CKARM    0.41 
