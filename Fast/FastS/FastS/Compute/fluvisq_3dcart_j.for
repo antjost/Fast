@@ -100,4 +100,3 @@ CCCCCC
 
       fv     = fv5*0.5  - (  gradT_ny*tcy )*xktvol
       flu5   = flu5 + fv
-

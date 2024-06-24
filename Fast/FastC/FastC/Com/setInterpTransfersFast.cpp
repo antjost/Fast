@@ -92,7 +92,7 @@ void K_FASTC::setInterpTransfersFast(
 
 {
   int rank = 0;
-  E_Int dest = 0;
+  int dest = 0;
 
 #ifdef _MPI
   if(mpi) { MPI_Comm_rank (MPI_COMM_WORLD, &rank); }
@@ -209,7 +209,7 @@ void K_FASTC::setInterpTransfersFast(
 
       //MPI_Barrier(MPI_COMM_WORLD);
 
-      E_Int nb_send_buffer = 0;
+      int nb_send_buffer = 0;
       for (E_Int ip2p = 1; ip2p < param_int_tc[1]+1; ++ip2p)
       {
         E_Int ech  = param_int_tc[ip2p + shift_graph];
@@ -342,7 +342,7 @@ void K_FASTC::setInterpTransfersFast(
        ipt_timecount[0] = ipt_timecount[0] + time_out -time_in;
       #endif
 
-      E_Int cpt_send_buffer = 0;
+      int cpt_send_buffer = 0;
       for (E_Int ip2p = 1; ip2p < param_int_tc[1]+1; ++ip2p)
         {
          E_Int ech  = param_int_tc[ip2p+shift_graph];

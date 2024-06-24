@@ -976,12 +976,7 @@ def _buildOwnData(t, Padding):
     'lbm_ibm_connector':0,
     'LBM_overset':0,
     'LBM_dx':1,
-    'LBM_NS':0,
-    #=========================================================
-    #========================================================= 
-    'KWire_p':1,
-    'DiameterWire_p':1,
-    'CtWire_p':1    
+    'LBM_NS':0
     }
 
     bases = Internal.getNodesFromType1(t, 'CGNSBase_t')  # noeud
@@ -1773,7 +1768,7 @@ def _buildOwnData(t, Padding):
                print("Nb_Cache_Bloc", Nb_Cache_Bloc)
                datap[13]  = Nb_Cache_Bloc
 
-            datap[25]  = 0     # zone 3D curvi par defaut
+            datap[25]  = 0     # zone 3D curvi par defaut 0: 3D FULL; 1: 3D HOMO; 2: 3D CART; 3: 2D
             datap[26]  = 0     # Vent 3D par defaut
             datap[27]  = iflow
             datap[28]  = iles
@@ -2192,9 +2187,7 @@ def _compact(t, containers=[Internal.__FlowSolutionNodes__, Internal.__FlowSolut
 
     if dtloc is None:
        own   = Internal.getNodeFromName1(t, '.Solver#ownData')  # noeud
-       dtloc = Internal.getNodeFromName1(own, '.Solver#dtloc')    # noeud
-
-    #print("compact dtloc=", dtloc)
+       dtloc = Internal.getNodeFromName1(own, '.Solver#dtloc')  # noeud
 
     zones = Internal.getZones(t)
     for z in zones:

@@ -3998,7 +3998,7 @@ def create_add_t_converg_hist(t2,it0=0,t_conv_hist=None):
     var_list_Loo=['RSD_oo','RSD_oo_diff']
     
     ##Create local copy by removing unnecessary stuff
-    t = Internal.rmNodesByName(t2,'ReferenceState')
+    t=Internal.rmNodesByName(t2,'ReferenceState')
     list_vars=['.Solver#define','.Solver#ownData']
     for var in list_vars:Internal._rmNodesByName(t,var)
 
@@ -4061,4 +4061,4 @@ def create_add_t_converg_hist(t2,it0=0,t_conv_hist=None):
             
         return t_conv_hist
 
-
+#==============================================================================

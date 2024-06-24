@@ -69,7 +69,6 @@ C Var loc
      &        +   10*param_int(IFLOW)
      &        +      param_int(ITYPZONE)
 
-
        IF  (option.eq.220) THEN
                                                
            call fluausm_lamin_o3_3dfull(ndom, ithread,

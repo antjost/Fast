@@ -6,7 +6,7 @@ c***********************************************************************
       subroutine spsource_ZDES3_rot_debug(ndom, param_int, param_real,
      &                     ind_loop, 
      &                     xmut,rop,coe, ti, tj, tk, vol,dlng, zgris,
-     &                     delta, drodm)
+     &                     delta, rop_cutOff, drodm)
 c***********************************************************************
 c_P                          O N E R A
 c     ACT
@@ -49,6 +49,8 @@ c***********************************************************************
 
       REAL_E dlng(param_int(NDIMDX)),vol(param_int(NDIMDX_MTR))
 
+      REAL_E rop_cutOff(param_int(NDIMDX))
+
       REAL_E param_real(0:*)
 
 
@@ -73,7 +75,8 @@ c Var loc
      & SA_CW2_LRE,S11,S22,S33,S12,S13,S23,St,r5,
      & SWITCH_SA_LOW_RE,SWITCH_SA_ROT_CORR
 
-
+      REAL_E DistCoef,cutOffDist,stildRANS,f2RANS
+      
 #include "FastS/formule_param.h"
 #include "FastS/formule_mtr_param.h"
 
