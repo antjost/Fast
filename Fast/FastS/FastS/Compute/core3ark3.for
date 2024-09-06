@@ -182,8 +182,8 @@ c
       
       ELSE
 
-      cmus1  =    param_real(VISCO+4)
-      temp01 = 1./param_real(VISCO+3)
+      cmus1  =    param_real(VISCO+4) !! param_real(13)
+      temp01 = 1./param_real(VISCO+3) !! param_real(12)
       coesut =    param_real(VISCO+2) * (1.+cmus1*temp01)
 
          If (param_int(ITYPZONE).ne.3) then

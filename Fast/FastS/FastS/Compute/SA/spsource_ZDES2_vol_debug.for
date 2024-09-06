@@ -6,7 +6,7 @@ c***********************************************************************
       subroutine spsource_ZDES2_vol_debug(ndom, param_int, param_real,
      &                     ind_loop, 
      &                     xmut,rop,coe, ti, tj, tk, vol,dlng,
-     &                     delta, fd, drodm)
+     &                     delta, fd, rop_cutOff, drodm)
 c***********************************************************************
 c_P                          O N E R A
 c     ACT
@@ -49,6 +49,8 @@ c***********************************************************************
 
       REAL_E dlng(param_int(NDIMDX)),vol(param_int(NDIMDX_MTR))
 
+      REAL_E rop_cutOff(param_int(NDIMDX))
+
       REAL_E param_real(0:*)
 
 
@@ -74,6 +76,9 @@ c Var loc
      & SWITCH_SA_LOW_RE,SWITCH_SA_ROT_CORR
 
 
+      REAL_E DistCoef,cutOffDist,stildRANS,f2RANS
+      INTEGER_E cutOffExist
+      
 #include "FastS/formule_param.h"
 #include "FastS/formule_mtr_param.h"
 
@@ -81,6 +86,8 @@ c.....formulation originelle
       fw(s)      = s*((1.+SA_CW3)/(s**6+SA_CW3))**(1./6.)
       fv1(s)     = 1./(1.+SA_CV1/(s*s*s))
       fv2(s,t)   = 1.-s/(1.+s*t)
+
+      cutOffExist = param_int(CUTOFF)
 
       SWITCH_SA_LOW_RE = param_int(SA_LOW_RE)
       SWITCH_SA_ROT_CORR = param_int(SA_ROT_CORR)

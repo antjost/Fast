@@ -74,7 +74,8 @@ void compute_sij( E_Float**& ipt_ro      , E_Float**& iptS     , E_Float**& ipt_
 	      E_Float*  iptcoe           , E_Float* iptmules           , E_Float**& iptdelta        , E_Float**& iptro_res        ,
 	      E_Float**& iptdrodm_trans  , E_Int*&  ipt_param_int_tc   , E_Float*& ipt_param_real_tc, E_Int*& ipt_linelets_int    ,
 	      E_Float*& ipt_linelets_real, E_Int& taille_tabs          , E_Float*& stock            , E_Float*& drodmstock        ,
-	      E_Float*& constk           , E_Float**  iptsrc           , E_Float* f_horseq          , E_Float* a1_pr          ,
-              E_Float* a1_fd              , E_Float* a1_hrr             , E_Float* aneq_o3            , E_Float* psi_corr       ,  E_Int& flag_NSLBM);
+	      E_Float*& constk           , E_Float**  iptsrc           , E_Float* f_horseq          , E_Float* a1_pr              ,
+              E_Float* a1_fd             , E_Float* a1_hrr             , E_Float* aneq_o3           , E_Float* psi_corr           ,  E_Int& flag_NSLBM,
+	      E_Float**  ipt_cutOff);
 }
 #endif

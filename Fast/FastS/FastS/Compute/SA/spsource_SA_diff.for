@@ -4,8 +4,9 @@ c     $Revision: 38 $
 c     $Author: IvanMary $
 c***********************************************************************
       subroutine spsource_SA_diff(ndom, nitcfg, param_int, param_real,
-     &                     ind_loop, 
-     &                     xmut,rop,coe, ti, tj, tk, vol,dlng, drodm)
+     &                            ind_loop, 
+     &                            xmut, rop, coe, ti, tj, tk, vol, dlng,
+     &                            rop_cutOff, drodm)
 c***********************************************************************
 c_P                          O N E R A
 c     ACT
@@ -46,6 +47,8 @@ c***********************************************************************
      &       tk( param_int(NDIMDX_MTR) , param_int(NEQ_K ) )
       REAL_E dlng(param_int(NDIMDX)),vol(param_int(NDIMDX_MTR))
 
+      REAL_E rop_cutOff(param_int(NDIMDX))
+
       REAL_E param_real(0:*)
 
 
@@ -68,6 +71,9 @@ c Var loc
      & dudx,dudy,dudz,dvdx,dvdy,dvdz,dwdx,dwdy,dwdz,
      & SA_CW2_LRE,S11,S22,S33,S12,S13,S23,St,r5
 
+      REAL_E DistCoef,cutOffDist
+      INTEGER_E cutOffExist
+      
 #include "FastS/formule_param.h"
 #include "FastS/formule_mtr_param.h"
 
@@ -76,6 +82,8 @@ c.....formulation originelle
       fv1(s)     = 1./(1.+SA_CV1/(s*s*s)) 
       fv2(s,t)   = 1.-s/(1.+s*t)
 
+      cutOffExist = param_int(CUTOFF)
+      
       cmus1  = param_real(VISCO+4)
       temp01 = 1./param_real(VISCO+3)
       coesut =  param_real(VISCO+2) * (1.+cmus1*temp01)

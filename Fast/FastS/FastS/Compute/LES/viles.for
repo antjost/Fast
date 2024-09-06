@@ -10,7 +10,8 @@ c***********************************************************************
      &        ind_dm_zone, ind_dm_socket,
      &        topo_s, ind_dm_omp,
      &        socket_topology, lok ,
-     &        rop , ti, tj, tk, vol, xmut, dist, rot)
+     &        rop , ti, tj, tk, vol, xmut, dist, rot,
+     &        rop_cutOff)
 
 c***********************************************************************
 c_U   USER : TERRACOL
@@ -45,7 +46,8 @@ c***********************************************************************
      & param_int(0:*), lok(*)
 
       REAL_E rop(*), ti(*),tj(*),tk(*),vol(*), xmut(*), dist(*),rot(*)
-
+      REAL_E rop_cutOff(*)
+      
       REAL_E param_real(0:*)
 
 C Var loc 
@@ -90,7 +92,7 @@ C Var loc
       elseif(param_int(IFLOW).eq.3) then
 
           call vispalart(ndo, param_int, param_real, ind_coe,
-     &                   xmut,rop)
+     &                   xmut,rop,dist,rop_cutOff)
       endif
                
 #include "../FastC/FastC/HPC_LAYER/SYNCHRO_GO.for"

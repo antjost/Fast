@@ -77,6 +77,8 @@ SA_DIST                     =132
 PT_INTERP                   =133
 NONZ                        =134
 
+CUTOFF                      =136
+
 LBM_c0                      =42
 LBM_taug                    =43
 LBM_TAUG                    =43

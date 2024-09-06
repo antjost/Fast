@@ -158,14 +158,14 @@ else
   E_Float** iptro_sfd;     E_Float** iptdelta;     E_Float** iptfd; E_Float** iptro_zgris; E_Float** iptro_res;
   E_Float** iptCellN  ;    E_Float** iptCellN_IBC; E_Float** ipt_cfl_zones;
   E_Float** iptssor;       E_Float** iptssortmp;
-  E_Float** ipt_gmrestmp;  E_Float** iptdrodm_transfer; 
+  E_Float** ipt_gmrestmp;  E_Float** iptdrodm_transfer; E_Float** ipt_cutOff; 
 
   ipt_param_int     = new E_Int*[nidom*4];
   ipt_ind_dm        = ipt_param_int   + nidom;
   ipt_it_lu_ssdom   = ipt_ind_dm      + nidom;
   ipt_degen         = ipt_it_lu_ssdom + nidom;
 
-  iptx              = new E_Float*[nidom*36];
+  iptx              = new E_Float*[nidom*37];
   ipty              = iptx               + nidom;
   iptz              = ipty               + nidom;
   iptro             = iptz               + nidom;
@@ -201,7 +201,8 @@ else
   iptdrodm_transfer = ipt_cfl_zones      + nidom;
   iptCellN_IBC      = iptdrodm_transfer  + nidom;
   iptsrc            = iptCellN_IBC       + nidom;
-
+  ipt_cutOff        = iptsrc             + nidom;
+  
   vector<PyArrayObject*> hook;
   PyObject* ssorArray = PyDict_GetItemString(work,"ssors");
     
@@ -274,6 +275,11 @@ else
 
     if(ipt_param_int[nd][ IBC ]== 1){t=K_PYTREE::getNodeFromName1(sol_center, "cellN_IBC"); iptCellN_IBC[nd] = K_PYTREE::getValueAF(t, hook); } 
     else { iptCellN_IBC[nd] = NULL;}
+
+    //WMLES - Tamaki et al. 2017 linearization + Kawai & Tamaki 2021
+    t            = K_PYTREE::getNodeFromName1(sol_center, "cutOffDist");
+    if (t == NULL) ipt_cutOff[nd] = NULL;
+    else ipt_cutOff[nd]   = K_PYTREE::getValueAF(t, hook);
 
     //Pointeur Vect Krylov
     iptkrylov[nd] = NULL;
@@ -608,7 +614,7 @@ else
             iptroflt           , iptroflt2        , iptwig            , iptstat_wig   ,
             iptdrodm           , iptcoe           , iptrot            , iptdelta         , iptro_res, iptdrodm_transfer  ,
             ipt_param_int_tc   , ipt_param_real_tc, ipt_linelets_int,   ipt_linelets_real,
-            taille_tabs        , iptstk           , iptdrodmstk       , iptcstk          , iptsrc);
+            taille_tabs        , iptstk           , iptdrodmstk       , iptcstk          , iptsrc, ipt_cutOff);
 
 
        if (lcfl == 1 && nstep == 1)  //mise a jour eventuelle du CFL au 1er sous-pas

@@ -167,6 +167,11 @@ def createPrimVars(t, omp_mode, rmConsVars=True, Adjoint=False, gradP=False, isW
 #==============================================================================
 def _createPrimVars(t, omp_mode, rmConsVars=True, Adjoint=False, gradP=False, isWireModel=False, lbmAJ=True):
     """Create primitive vars from conservative vars."""
+
+    wallLawLin = 0
+    if C.isNamePresent(t,'centers:cutOffDist') >= 0: wallLawLin=1
+    wallLawLin = Cmpi.allreduce(wallLawLin,op=Cmpi.MAX)
+    
     vars_zones=[]
     flag_NSLBM = 0
     bases = Internal.getNodesFromType1(t, 'CGNSBase_t')
@@ -293,6 +298,10 @@ def _createPrimVars(t, omp_mode, rmConsVars=True, Adjoint=False, gradP=False, is
                  fields2compact.append('centers:'+v+'_src')
                fields2compact.append('centers:cellN_src')
                vars.append(fields2compact)
+            if wallLawLin == 1:   # Tamaki et al 2017 + Kawai & Tamaki 2021 linearization
+                fields2compact =[]
+                fields2compact.append('centers:cutOffDist')
+                vars.append(fields2compact)
             if motion == 'deformation' or motion == 'rigid_ext':     #ale deformable
                fields2compact=[]
                for v in ['VelocityX','VelocityY','VelocityZ']:
@@ -783,6 +792,9 @@ def _createVarsFast(base, zone, omp_mode, rmConsVars=True, adjoint=False, gradP=
        if (sa and C.isNamePresent(zone, 'centers:TurbulentSANuTildeDensity_src') != 1): C._initVars(zone, 'centers:TurbulentSANuTildeDensity_src', 0.)
        if source == 2 and C.isNamePresent(zone, 'centers:cellN_src') != 1:  C._initVars(zone, 'centers:cellN_src', 0.)
 
+
+    ##if C.isNamePresent(zone, 'centers:cutOffDist')   != 1:   C._initVars(zone, 'centers:cutOffDist', 1.)   
+
     # init termes zone eponge
     sponge = 0
     a = Internal.getNodeFromName1(define,'lbm_sponge')
@@ -1016,6 +1028,10 @@ def _buildOwnData(t, Padding):
     NbptsLinelets = 0
     first = Internal.getNodeFromName1(t, 'NbptsLinelets')
     if first is not None: NbptsLinelets = Internal.getValue(first)
+
+    wallLawLin = 0
+    if C.isNamePresent(t,'centers:cutOffDist') >= 0: wallLawLin=1
+    wallLawLin = Cmpi.allreduce(wallLawLin,op=Cmpi.MAX)
 
     zones = Internal.getZones(t)
 
@@ -1688,7 +1704,7 @@ def _buildOwnData(t, Padding):
             # creation noeud parametre integer
 
             
-            number_of_defines_param_int = 135                           # Number Param INT
+            number_of_defines_param_int = 136                           # Number Param INT
             size_int                   = number_of_defines_param_int +1 # number of defines + 1
 
 
@@ -1876,7 +1892,8 @@ def _buildOwnData(t, Padding):
                     if val == 1 or val == 'active' or val == True: datap[VSHARE.SA_ROT_CORR] = 1
 
 
-            datap[VSHARE.NONZ] = ndom
+            datap[VSHARE.NONZ]   = ndom
+            datap[VSHARE.CUTOFF] = wallLawLin
             i += 1
          
             Internal.createUniqueChild(o, 'Parameter_int', 'DataArray_t', datap)
@@ -4628,6 +4645,9 @@ def tcStat_IBC(t,tc,vartTypeIBC=2,bcTypeIB=3):
     [RoInf, RouInf, RovInf, RowInf, RoeInf, PInf, TInf, cvInf, MInf,
      ReInf, Cs, Gamma, RokInf, RoomegaInf, RonutildeInf,
      Mus, Cs, Ts, Pr] = C.getState(t)
+
+    zones = Internal.getZones(t)
+    X.miseAPlatDonorTree__(zones, tc, graph=None, list_graph=None, nbpts_linelets=None)
     
     C._initVars(t,'{centers:Temperature}={centers:Pressure}/(287.053*{centers:Density})')
     VARSMACRO   =['Density','VelocityX','VelocityY','VelocityZ','Temperature']

@@ -37,17 +37,17 @@ E_Float time_init;
 //E_Float time_init;
 
 E_Int K_FAST::gsdr3(E_Int**& param_int  , E_Float**& param_real       , E_Int& nidom                , E_Int& nitrun           ,
-            E_Int&  nitcfg              , E_Int&  nitcfg_last         , E_Int&  nssiter             , E_Int& it_target        ,
-            E_Int&  first_it            , E_Int& kimpli               , E_Int& lssiter_verif        , E_Int& lexit_lu         ,
-            E_Int& layer_mode           , E_Int& mpi                  , E_Int& nisdom_lu_max        ,
-            E_Int& mx_nidom             , E_Int& ndimt_flt            , E_Int& threadmax_sdm        , E_Int& mx_synchro       ,
-            E_Int& nb_pulse             , E_Float& temps              , E_Int* ipt_ijkv_sdm         , E_Int* ipt_ind_dm_omp   ,  E_Int* iptdtloc    ,
-            E_Int* ipt_topology         , E_Int* ipt_ind_CL           , E_Int* ipt_lok              , E_Int* verrou_lhs       ,
-            E_Int& vartype              , E_Float* timer_omp          , E_Int*     iptludic         , E_Int*   iptlumax       ,
-            E_Int** ipt_ind_dm          , E_Int** ipt_it_lu_ssdom     , E_Int** ipt_ng_pe           , E_Int** ipt_nfconn      ,
-            E_Int** ipt_nfindex         , E_Float* ipt_VectG          , E_Float* ipt_VectY          , E_Float** iptssor       ,
-            E_Float** iptssortmp        , E_Int* ipt_ssor_size        , E_Float* ipt_drodmd         , E_Float* ipt_Hessenberg ,
-            E_Float** iptkrylov         , E_Float** iptkrylov_transfer, E_Float* ipt_norm_kry       , E_Float** ipt_gmrestmp  ,
+		    E_Int&  nitcfg              , E_Int&  nitcfg_last         , E_Int&  nssiter             , E_Int& it_target        ,
+		    E_Int&  first_it            , E_Int& kimpli               , E_Int& lssiter_verif        , E_Int& lexit_lu         ,
+		    E_Int& layer_mode           , E_Int& mpi                  , E_Int& nisdom_lu_max        ,
+		    E_Int& mx_nidom             , E_Int& ndimt_flt            , E_Int& threadmax_sdm        , E_Int& mx_synchro       ,
+		    E_Int& nb_pulse             , E_Float& temps              , E_Int* ipt_ijkv_sdm         , E_Int* ipt_ind_dm_omp   ,  E_Int* iptdtloc    ,
+		    E_Int* ipt_topology         , E_Int* ipt_ind_CL           , E_Int* ipt_lok              , E_Int* verrou_lhs       ,
+		    E_Int& vartype              , E_Float* timer_omp          , E_Int*     iptludic         , E_Int*   iptlumax       ,
+		    E_Int** ipt_ind_dm          , E_Int** ipt_it_lu_ssdom     , E_Int** ipt_ng_pe           , E_Int** ipt_nfconn      ,
+		    E_Int** ipt_nfindex         , E_Float* ipt_VectG          , E_Float* ipt_VectY          , E_Float** iptssor       ,
+		    E_Float** iptssortmp        , E_Int* ipt_ssor_size        , E_Float* ipt_drodmd         , E_Float* ipt_Hessenberg ,
+		    E_Float** iptkrylov         , E_Float** iptkrylov_transfer, E_Float* ipt_norm_kry       , E_Float** ipt_gmrestmp  ,
 		    E_Float* ipt_givens         , E_Float*   ipt_cfl          , E_Float**  iptx             , E_Float**  ipty         ,
 		    E_Float**    iptz           , E_Float**  iptCellN         , E_Float**  iptCellN_IBC     , E_Float** iptFltrN      , E_Float** iptSpongeCoef, E_Int** ipt_degen   ,
 		    E_Float**& iptro            , E_Float**& iptro_m1         , E_Float**&  iptrotmp        , E_Float**& iptrof       , E_Float**& iptS     ,  E_Float**& iptPsiG,
@@ -61,7 +61,8 @@ E_Int K_FAST::gsdr3(E_Int**& param_int  , E_Float**& param_real       , E_Int& n
 		    E_Float**& iptdrodm_transfer, E_Int*&    param_int_tc     , E_Float*& param_real_tc     , E_Int*& linelets_int    ,
 		    E_Float*& linelets_real     , E_Int&     taille_tabs      , E_Float*& stock             , E_Float*& drodmstock    ,
 		    E_Float*& constk            , E_Float** iptsrc            , E_Float* f_horseq           , E_Float* a1_pr          ,
-            E_Float* a1_fd              , E_Float* a1_hrr             , E_Float* aneq_o3            , E_Float* psi_corr       ,  E_Int& flag_NSLBM)
+		    E_Float* a1_fd              , E_Float* a1_hrr             , E_Float* aneq_o3            , E_Float* psi_corr       ,  E_Int& flag_NSLBM,
+		    E_Float**  ipt_cutOff)
 {
   E_Float*  feq          = iptdrodm;
   E_Float** feq_transfer = iptdrodm_transfer;
